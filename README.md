@@ -1,3 +1,11 @@
+<p> 
+Thanks to devro: https://blog.alexdevero.com/tetris-game-react-typescript/?utm_source=Blog+subscribers&utm_campaign=d4b78034d8-EMAIL_CAMPAIGN_2019_06_10_11_31&utm_medium=email&utm_term=0_c26e518212-d4b78034d8-582141237
+</p>
+<p>
+I made some adjustments and will continue to refactor and add more features to it.
+</p> 
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

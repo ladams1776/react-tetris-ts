@@ -29,13 +29,13 @@ type TetrisState = {
 // Create Tetris component
 class Tetris extends React.Component<TetrisProps, TetrisState> {
     constructor(props: any) {
-        super(props)
+        super(props);
 
         // Generate board based on number of boardHeight & boardWidth props
-        let field = []
+        let field = [];
 
         for (let y = 0; y < props.boardHeight; y++) {
-            let row = []
+            let row = [];
 
             for (let x = 0; x < props.boardWidth; x++) {
                 row.push(0)
