@@ -1,8 +1,7 @@
 // Import React
-import * as React from 'react'
-
-// Import TetrisBoard component
+import React, {Component} from 'react'
 import TetrisBoard from './tetris-board'
+import Tiles from "./tiles";
 
 // Define props for Tetris component
 type TetrisProps = {
@@ -26,14 +25,13 @@ type TetrisState = {
     tiles: number[][][][]
 }
 
-// Create Tetris component
-class Tetris extends React.Component<TetrisProps, TetrisState> {
+class Tetris extends Component<TetrisProps, TetrisState> {
     constructor(props: any) {
         super(props);
-        
-        const { boardWidth, boardHeight } = props;
 
-        const field:number[][] = this._generateBoardAndReturnField(boardWidth, boardHeight);
+        const {boardWidth, boardHeight} = props;
+
+        const field: number[][] = this._generateBoardAndReturnField(boardWidth, boardHeight);
 
         const xStart = this._setStartingColumnWhereTilesBegin(boardWidth);
 
@@ -49,70 +47,12 @@ class Tetris extends React.Component<TetrisProps, TetrisState> {
             isPaused: false,
             field,
             timerId: null,
-            tiles: [
-                // 7 tiles
-                // Each tile can be rotated 4 times (x/y coordinates)
-                [
-                    // The default square
-                    [[0, 0], [0, 0], [0, 0], [0, 0]],
-                    [[0, 0], [0, 0], [0, 0], [0, 0]],
-                    [[0, 0], [0, 0], [0, 0], [0, 0]],
-                    [[0, 0], [0, 0], [0, 0], [0, 0]]
-                ],
-                [
-                    // The cube tile (block 2x2)
-                    [[0, 0], [1, 0], [0, 1], [1, 1]],
-                    [[0, 0], [1, 0], [0, 1], [1, 1]],
-                    [[0, 0], [1, 0], [0, 1], [1, 1]],
-                    [[0, 0], [1, 0], [0, 1], [1, 1]]
-                ],
-                [
-                    // The I tile
-                    [[0, -1], [0, 0], [0, 1], [0, 2]],
-                    [[-1, 0], [0, 0], [1, 0], [2, 0]],
-                    [[0, -1], [0, 0], [0, 1], [0, 2]],
-                    [[-1, 0], [0, 0], [1, 0], [2, 0]]
-                ],
-                [
-                    // The T tile
-                    [[0, 0], [-1, 0], [1, 0], [0, -1]],
-                    [[0, 0], [1, 0], [0, 1], [0, -1]],
-                    [[0, 0], [-1, 0], [1, 0], [0, 1]],
-                    [[0, 0], [-1, 0], [0, 1], [0, -1]]
-                ],
-                [
-                    // The inverse L tile
-                    [[0, 0], [-1, 0], [1, 0], [-1, -1]],
-                    [[0, 0], [0, 1], [0, -1], [1, -1]],
-                    [[0, 0], [1, 0], [-1, 0], [1, 1]],
-                    [[0, 0], [0, 1], [0, -1], [-1, 1]]
-                ],
-                [
-                    // The L tile
-                    [[0, 0], [1, 0], [-1, 0], [1, -1]],
-                    [[0, 0], [0, 1], [0, -1], [1, 1]],
-                    [[0, 0], [1, 0], [-1, 0], [-1, 1]],
-                    [[0, 0], [0, 1], [0, -1], [-1, -1]]
-                ],
-                [
-                    // The Z tile
-                    [[0, 0], [1, 0], [0, -1], [-1, -1]],
-                    [[0, 0], [1, 0], [0, 1], [1, -1]],
-                    [[0, 0], [1, 0], [0, -1], [-1, -1]],
-                    [[0, 0], [1, 0], [0, 1], [1, -1]]
-                ],
-                [
-                    // The inverse Z tile
-                    [[0, 0], [-1, 0], [0, -1], [1, -1]],
-                    [[0, 0], [0, -1], [1, 0], [1, 1]],
-                    [[0, 0], [-1, 0], [0, -1], [1, -1]],
-                    [[0, 0], [0, -1], [1, 0], [1, 1]]
-                ]
-            ]
+            tiles: Tiles
         }
     }
 
     /**
+     * @description
      * 1. We create the `field` double array.
      * 2. Iterate over `boardHeight`, during each iteration instantiate a new `row` array.
      * 3. Inner loop over the `boardWidth` and set each index in that `row` array to 0, to represent empty.
@@ -123,8 +63,9 @@ class Tetris extends React.Component<TetrisProps, TetrisState> {
      * @param boardWidth
      * @param boardHeight
      * @private
+     * @memberof Tetris
      */
-    _generateBoardAndReturnField = (boardWidth:number, boardHeight:number) => {
+    _generateBoardAndReturnField = (boardWidth: number, boardHeight: number) => {
         let field = [];
 
         for (let y = 0; y < boardHeight; y++) {
@@ -141,26 +82,27 @@ class Tetris extends React.Component<TetrisProps, TetrisState> {
     };
 
 
-    _setStartingColumnWhereTilesBegin = (boardWidth:number) => {
+    _setStartingColumnWhereTilesBegin = (boardWidth: number) => {
         return Math.floor(boardWidth / 2);
     };
 
     /**
-     * @description Sets timer after component mounts
-     * Uses level (this.state.level) to determine the interval (game speed)
+     * @description 1. Sets timer after component mounts
+     * 2. Uses level (this.state.level) to determine the interval (game speed)
      * and executes handleBoardUpdate() set to 'down' method during each interval
+     *
      * @memberof Tetris
      */
     componentDidMount() {
-        let timerId
+        let timerId;
 
         timerId = window.setInterval(
             () => this.handleBoardUpdate('down'),
             1000 - (this.state.level * 10 > 600 ? 600 : this.state.level * 10)
-        )
+        );
 
         this.setState({
-            timerId: timerId
+            timerId
         })
     }
 
@@ -173,21 +115,22 @@ class Tetris extends React.Component<TetrisProps, TetrisState> {
     }
 
     /**
+     * 1. Do nothing if game ends, or is paused
+     * 2. Prepare variables for additions to x/y coordinates, current active tile and new rotation
+     *
      * @description Handles board updates
      * @param {string} command
      * @memberof Tetris
      */
     handleBoardUpdate(command: string) {
-        // Do nothing if game ends, or is paused
         if (this.state.gameOver || this.state.isPaused) {
             return
         }
 
-        // Prepare variables for additions to x/y coordinates, current active tile and new rotation
-        let xAdd = 0
-        let yAdd = 0
-        let rotateAdd = 0
-        let tile = this.state.activeTile
+        let xAdd = 0;
+        let yAdd = 0;
+        let rotateAdd = 0;
+        let tile = this.state.activeTile;
 
         // If tile should move to the left
         // set xAdd to -1
@@ -214,21 +157,21 @@ class Tetris extends React.Component<TetrisProps, TetrisState> {
         }
 
         // Get current x/y coordinates, active tile, rotate and all tiles
-        let field = this.state.field
-        let x = this.state.activeTileX
-        let y = this.state.activeTileY
-        let rotate = this.state.tileRotate
+        let field = this.state.field;
+        let x = this.state.activeTileX;
+        let y = this.state.activeTileY;
+        let rotate = this.state.tileRotate;
 
-        const tiles = this.state.tiles
+        const tiles = this.state.tiles;
 
         // Remove actual tile from field to test for new insert position
-        field[y + tiles[tile][rotate][0][1]][x + tiles[tile][rotate][0][0]] = 0
-        field[y + tiles[tile][rotate][1][1]][x + tiles[tile][rotate][1][0]] = 0
-        field[y + tiles[tile][rotate][2][1]][x + tiles[tile][rotate][2][0]] = 0
-        field[y + tiles[tile][rotate][3][1]][x + tiles[tile][rotate][3][0]] = 0
+        field[y + tiles[tile][rotate][0][1]][x + tiles[tile][rotate][0][0]] = 0;
+        field[y + tiles[tile][rotate][1][1]][x + tiles[tile][rotate][1][0]] = 0;
+        field[y + tiles[tile][rotate][2][1]][x + tiles[tile][rotate][2][0]] = 0;
+        field[y + tiles[tile][rotate][3][1]][x + tiles[tile][rotate][3][0]] = 0;
 
         // Test if the move can be executed on actual field
-        let xAddIsValid = true
+        let xAddIsValid = true;
 
         // Test if tile should move horizontally
         if (xAdd !== 0) {
@@ -485,7 +428,8 @@ class Tetris extends React.Component<TetrisProps, TetrisState> {
                 <div className="tetris__game-controls">
                     <button className="btn" onClick={this.handleNewGameClick}>New Game</button>
 
-                    <button className="btn" onClick={this.handlePauseClick}>{this.state.isPaused ? 'Resume' : 'Pause'}</button>
+                    <button className="btn"
+                            onClick={this.handlePauseClick}>{this.state.isPaused ? 'Resume' : 'Pause'}</button>
                 </div>
             </div>
         )
