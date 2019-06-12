@@ -30,19 +30,11 @@ type TetrisState = {
 class Tetris extends React.Component<TetrisProps, TetrisState> {
     constructor(props: any) {
         super(props);
+        const { boardWidth, boardHeight } = props;
 
         // Generate board based on number of boardHeight & boardWidth props
-        let field = [];
+        const field:number[][] = this._generateBoardAndReturnField(boardWidth, boardHeight);
 
-        for (let y = 0; y < props.boardHeight; y++) {
-            let row = [];
-
-            for (let x = 0; x < props.boardWidth; x++) {
-                row.push(0)
-            }
-
-            field.push(row)
-        }
 
         // Set starting column to center
         let xStart = Math.floor(parseInt(props.boardWidth) / 2)
@@ -58,7 +50,7 @@ class Tetris extends React.Component<TetrisProps, TetrisState> {
             tileCount: 0,
             gameOver: false,
             isPaused: false,
-            field: field,
+            field,
             timerId: null,
             tiles: [
                 // 7 tiles
@@ -122,6 +114,34 @@ class Tetris extends React.Component<TetrisProps, TetrisState> {
             ]
         }
     }
+
+    /**
+     * 1. We create the `field` double array.
+     * 2. Iterate over `boardHeight`, during each iteration instantiate a new `row` array.
+     * 3. Inner loop over the `boardWidth` and set each index in that `row` array to 0, to represent empty.
+     * 4. push this row onto the `field` double array
+     * 5. For every iteration over the boardWith we are setting an empty cell.
+     * 6. Return the field
+     *
+     * @param boardWidth
+     * @param boardHeight
+     * @private
+     */
+    _generateBoardAndReturnField = (boardWidth:number, boardHeight:number) => {
+        let field = [];
+
+        for (let y = 0; y < boardHeight; y++) {
+            let row = [];
+
+            for (let x = 0; x < boardWidth; x++) {
+                row.push(0)
+            }
+
+            field.push(row)
+        }
+
+        return field;
+    };
 
     /**
      * @description Sets timer after component mounts
