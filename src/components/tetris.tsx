@@ -30,16 +30,13 @@ type TetrisState = {
 class Tetris extends React.Component<TetrisProps, TetrisState> {
     constructor(props: any) {
         super(props);
+        
         const { boardWidth, boardHeight } = props;
 
-        // Generate board based on number of boardHeight & boardWidth props
         const field:number[][] = this._generateBoardAndReturnField(boardWidth, boardHeight);
 
+        const xStart = this._setStartingColumnWhereTilesBegin(boardWidth);
 
-        // Set starting column to center
-        let xStart = Math.floor(parseInt(props.boardWidth) / 2)
-
-        // Initialize state with starting conditions
         this.state = {
             activeTileX: xStart,
             activeTileY: 1,
@@ -141,6 +138,11 @@ class Tetris extends React.Component<TetrisProps, TetrisState> {
         }
 
         return field;
+    };
+
+
+    _setStartingColumnWhereTilesBegin = (boardWidth:number) => {
+        return Math.floor(boardWidth / 2);
     };
 
     /**
