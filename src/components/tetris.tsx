@@ -33,10 +33,10 @@ class Tetris extends Component<TetrisProps, TetrisState> {
 
         const field: number[][] = this._generateBoardAndReturnField(boardWidth, boardHeight);
 
-        const xStart = this._setStartingColumnWhereTilesBegin(boardWidth);
+        const activeTileX = this._setStartingColumnWhereTilesBegin(boardWidth);
 
         this.state = {
-            activeTileX: xStart,
+            activeTileX,
             activeTileY: 1,
             activeTile: 1,
             tileRotate: 0,
@@ -198,8 +198,8 @@ class Tetris extends Component<TetrisProps, TetrisState> {
         }
 
         // Try to rotate the tile
-        let newRotate = rotate + rotateAdd > 3 ? 0 : rotate + rotateAdd
-        let rotateIsValid = true
+        let newRotate = rotate + rotateAdd > 3 ? 0 : rotate + rotateAdd;
+        let rotateIsValid = true;
 
         // Test if tile should rotate
         if (rotateAdd !== 0) {
@@ -364,32 +364,22 @@ class Tetris extends Component<TetrisProps, TetrisState> {
         this.setState(prev => ({
             isPaused: !prev.isPaused
         }))
-    }
+    };
 
     /**
      * @description Resets the game
      * @memberof Tetris
      */
     handleNewGameClick = () => {
-        // Create an empty board
-        let field: any[] = []
+        const {boardWidth, boardHeight} = this.props;
 
-        for (let y = 0; y < this.props.boardHeight; y++) {
-            let row = []
+        const field:number[][] = this._generateBoardAndReturnField(boardWidth, boardHeight);
 
-            for (let x = 0; x < this.props.boardWidth; x++) {
-                row.push(0)
-            }
-
-            field.push(row)
-        }
-
-        // Set starting column to center
-        let xStart = Math.floor(parseInt(this.props.boardWidth) / 2)
+        const activeTileX = this._setStartingColumnWhereTilesBegin(boardWidth);
 
         // Initialize state with starting conditions
         this.setState({
-            activeTileX: xStart,
+            activeTileX,
             activeTileY: 1,
             activeTile: 2,
             tileRotate: 0,
@@ -397,9 +387,9 @@ class Tetris extends Component<TetrisProps, TetrisState> {
             level: 1,
             tileCount: 0,
             gameOver: false,
-            field: field
+            field
         })
-    }
+    };
 
     render() {
         return (
