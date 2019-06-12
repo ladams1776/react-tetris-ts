@@ -233,7 +233,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
         }
 
         // Try to speed up the fall of the tile
-        let yAddIsValid = true
+        let yAddIsValid = true;
 
         // Test if tile should fall faster
         if (yAdd !== 0) {
