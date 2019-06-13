@@ -11,10 +11,10 @@ type GameControlButtonsProps = {
 const GameControlButtons = (props: { pauseClick: Function, newGameClick: Function, isPaused: boolean }) => {
     const { pauseClick, newGameClick, isPaused } = props;
 
-    return <>
+    return <div className="tetris__game-controls">
         <NewGameButton click={newGameClick}/>
         <PauseButton click={pauseClick} isPaused={isPaused}/>
-    </>
+   </div>
 };
 
 export default GameControlButtons;
