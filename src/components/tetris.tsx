@@ -3,6 +3,7 @@ import React, {Component} from 'react'
 import TetrisBoard from './tetris-board'
 import Tiles from "./tiles";
 import PauseButton from "./Buttons/pause-button";
+import NewGameButton from "./Buttons/new-game-button";
 
 // Define props for Tetris component
 type TetrisProps = {
@@ -415,13 +416,9 @@ class Tetris extends Component<TetrisProps, TetrisState> {
                     <button className="btn" onClick={() => this.handleBoardUpdate('rotate')}>Rotate</button>
                 </div>
 
-                {/* Buttons to control game */}
                 <div className="tetris__game-controls">
-                    <button className="btn" onClick={this.handleNewGameClick}>New Game</button>
-
-                    <PauseButton
-                        click={this.handlePauseClick}
-                        isPaused={this.state.isPaused}/>
+                    <NewGameButton click={this.handleNewGameClick}/>
+                    <PauseButton click={this.handlePauseClick} isPaused={this.state.isPaused}/>
                 </div>
             </div>
         )
