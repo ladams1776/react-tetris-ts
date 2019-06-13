@@ -2,8 +2,8 @@
 import React, {Component} from 'react'
 import TetrisBoard from './tetris-board'
 import Tiles from "./tiles";
-import PauseButton from "./Buttons/pause-button";
-import NewGameButton from "./Buttons/new-game-button";
+import BlockControlButtons from "./Buttons/block-control-buttons";
+import GameControlButtons from "./Buttons/game-control-buttons";
 
 // Define props for Tetris component
 type TetrisProps = {
@@ -51,6 +51,8 @@ class Tetris extends Component<TetrisProps, TetrisState> {
             timerId: null,
             tiles: Tiles
         }
+
+        this.handleBoardUpdate = this.handleBoardUpdate.bind(this);
     }
 
     /**
@@ -125,7 +127,8 @@ class Tetris extends Component<TetrisProps, TetrisState> {
      * @memberof Tetris
      */
     handleBoardUpdate(command: string) {
-        if (this.state.gameOver || this.state.isPaused) {
+        const { gameOver, isPaused } = this.state;
+        if (gameOver || isPaused) {
             return
         }
 
@@ -405,21 +408,8 @@ class Tetris extends Component<TetrisProps, TetrisState> {
                     rotate={this.state.tileRotate}
                 />
 
-                {/* Buttons to control blocks */}
-                <div className='tetris__block-controls'>
-                    <button className="btn" onClick={() => this.handleBoardUpdate('left')}>Left</button>
-
-                    <button className="btn" onClick={() => this.handleBoardUpdate('down')}>Down</button>
-
-                    <button className="btn" onClick={() => this.handleBoardUpdate('right')}>Right</button>
-
-                    <button className="btn" onClick={() => this.handleBoardUpdate('rotate')}>Rotate</button>
-                </div>
-
-                <div className="tetris__game-controls">
-                    <NewGameButton click={this.handleNewGameClick}/>
-                    <PauseButton click={this.handlePauseClick} isPaused={this.state.isPaused}/>
-                </div>
+                <BlockControlButtons click={this.handleBoardUpdate}/>
+                <GameControlButtons pauseClick={this.handlePauseClick} newGameClick={this.handleNewGameClick} isPaused={this.state.isPaused}/>
             </div>
         )
     }
