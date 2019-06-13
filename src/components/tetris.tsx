@@ -2,6 +2,7 @@
 import React, {Component} from 'react'
 import TetrisBoard from './tetris-board'
 import Tiles from "./tiles";
+import PauseButton from "./Buttons/pause-button";
 
 // Define props for Tetris component
 type TetrisProps = {
@@ -373,7 +374,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
     handleNewGameClick = () => {
         const {boardWidth, boardHeight} = this.props;
 
-        const field:number[][] = this._generateBoardAndReturnField(boardWidth, boardHeight);
+        const field: number[][] = this._generateBoardAndReturnField(boardWidth, boardHeight);
 
         const activeTileX = this._setStartingColumnWhereTilesBegin(boardWidth);
 
@@ -418,8 +419,9 @@ class Tetris extends Component<TetrisProps, TetrisState> {
                 <div className="tetris__game-controls">
                     <button className="btn" onClick={this.handleNewGameClick}>New Game</button>
 
-                    <button className="btn"
-                            onClick={this.handlePauseClick}>{this.state.isPaused ? 'Resume' : 'Pause'}</button>
+                    <PauseButton
+                        click={this.handlePauseClick}
+                        isPaused={this.state.isPaused}/>
                 </div>
             </div>
         )
