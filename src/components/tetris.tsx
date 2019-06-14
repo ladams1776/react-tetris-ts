@@ -5,11 +5,6 @@ import Tiles from "./tiles";
 import BlockControlButtons from "./Buttons/block-control-buttons";
 import GameControlButtons from "./Buttons/game-control-buttons";
 
-const LEFT_KEY = 37;
-const UP_KEY = 38;
-const RIGHT_KEY = 39;
-const DOWN_KEY = 40;
-
 // Define props for Tetris component
 type TetrisProps = {
     boardWidth: any,
@@ -93,10 +88,6 @@ class Tetris extends Component<TetrisProps, TetrisState> {
         return Math.floor(boardWidth / 2);
     };
 
-    componentWillMount(): void {
-        document.addEventListener("keydown", this._handleDirectionKeyPress, false);
-    }
-
     /**
      * @description 1. Sets timer after component mounts
      * 2. Uses level (this.state.level) to determine the interval (game speed)
@@ -105,11 +96,13 @@ class Tetris extends Component<TetrisProps, TetrisState> {
      * @memberof Tetris
      */
     componentDidMount() {
+        const { level } = this.state;
+
         let timerId;
 
         timerId = window.setInterval(
             () => this._handleBoardUpdate('down'),
-            1000 - (this.state.level * 10 > 600 ? 600 : this.state.level * 10)
+            1000 - (level * 10 > 600 ? 600 : level * 10)
         );
 
         this.setState({
@@ -122,8 +115,8 @@ class Tetris extends Component<TetrisProps, TetrisState> {
      * @memberof Tetris
      */
     componentWillUnmount() {
-        document.removeEventListener("keydown", this._handleDirectionKeyPress, false);
-        window.clearInterval(this.state.timerId);
+        const { timerId } = this.state;
+        window.clearInterval(timerId);
     }
 
     /**
@@ -135,7 +128,9 @@ class Tetris extends Component<TetrisProps, TetrisState> {
      * @memberof Tetris
      */
     _handleBoardUpdate = (command: string) => {
-        const {gameOver, isPaused} = this.state;
+        const { gameOver, isPaused, activeTile, field, activeTileX, activeTileY, tileRotate, tiles, level } = this.state;
+        const { boardWidth, boardHeight } = this.props;
+
         if (gameOver || isPaused) {
             return
         }
@@ -143,7 +138,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
         let xAdd = 0;
         let yAdd = 0;
         let rotateAdd = 0;
-        let tile = this.state.activeTile;
+        let tile = activeTile;
 
         // If tile should move to the left
         // set xAdd to -1
@@ -170,12 +165,9 @@ class Tetris extends Component<TetrisProps, TetrisState> {
         }
 
         // Get current x/y coordinates, active tile, rotate and all tiles
-        let field = this.state.field;
-        let x = this.state.activeTileX;
-        let y = this.state.activeTileY;
-        let rotate = this.state.tileRotate;
-
-        const tiles = this.state.tiles;
+        let x = activeTileX;
+        let y = activeTileY;
+        let rotate = tileRotate;
 
         // Remove actual tile from field to test for new insert position
         field[y + tiles[tile][rotate][0][1]][x + tiles[tile][rotate][0][0]] = 0;
@@ -192,7 +184,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
                 // Test if tile can be moved without getting outside the board
                 if (
                     x + xAdd + tiles[tile][rotate][i][0] >= 0
-                    && x + xAdd + tiles[tile][rotate][i][0] < this.props.boardWidth
+                    && x + xAdd + tiles[tile][rotate][i][0] < boardWidth
                 ) {
                     if (field[y + tiles[tile][rotate][i][1]][x + xAdd + tiles[tile][rotate][i][0]] !== 0) {
                         // Prevent the move
@@ -220,9 +212,9 @@ class Tetris extends Component<TetrisProps, TetrisState> {
                 // Test if tile can be rotated without getting outside the board
                 if (
                     x + tiles[tile][newRotate][i][0] >= 0 &&
-                    x + tiles[tile][newRotate][i][0] < this.props.boardWidth &&
+                    x + tiles[tile][newRotate][i][0] < boardWidth &&
                     y + tiles[tile][newRotate][i][1] >= 0 &&
-                    y + tiles[tile][newRotate][i][1] < this.props.boardHeight
+                    y + tiles[tile][newRotate][i][1] < boardHeight
                 ) {
                     // Test of tile rotation is not blocked by other tiles
                     if (
@@ -254,7 +246,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
                 // Test if tile can fall faster without getting outside the board
                 if (
                     y + yAdd + tiles[tile][rotate][i][1] >= 0 &&
-                    y + yAdd + tiles[tile][rotate][i][1] < this.props.boardHeight
+                    y + yAdd + tiles[tile][rotate][i][1] < boardHeight
                 ) {
                     // Test if faster fall is not blocked by other tiles
                     if (
@@ -278,19 +270,19 @@ class Tetris extends Component<TetrisProps, TetrisState> {
         }
 
         // Render the tile at new position
-        field[y + tiles[tile][rotate][0][1]][x + tiles[tile][rotate][0][0]] = tile
-        field[y + tiles[tile][rotate][1][1]][x + tiles[tile][rotate][1][0]] = tile
-        field[y + tiles[tile][rotate][2][1]][x + tiles[tile][rotate][2][0]] = tile
-        field[y + tiles[tile][rotate][3][1]][x + tiles[tile][rotate][3][0]] = tile
+        field[y + tiles[tile][rotate][0][1]][x + tiles[tile][rotate][0][0]] = tile;
+        field[y + tiles[tile][rotate][1][1]][x + tiles[tile][rotate][1][0]] = tile;
+        field[y + tiles[tile][rotate][2][1]][x + tiles[tile][rotate][2][0]] = tile;
+        field[y + tiles[tile][rotate][3][1]][x + tiles[tile][rotate][3][0]] = tile;
 
         // If moving down is not possible, remove completed rows add score
         // and find next tile and check if game is over
         if (!yAddIsValid) {
-            for (let row = this.props.boardHeight - 1; row >= 0; row--) {
-                let isLineComplete = true
+            for (let row = boardHeight - 1; row >= 0; row--) {
+                let isLineComplete = true;
 
                 // Check if row is completed
-                for (let col = 0; col < this.props.boardWidth; col++) {
+                for (let col = 0; col < boardWidth; col++) {
                     if (field[row][col] === 0) {
                         isLineComplete = false
                     }
@@ -299,45 +291,45 @@ class Tetris extends Component<TetrisProps, TetrisState> {
                 // Remove completed rows
                 if (isLineComplete) {
                     for (let yRowSrc = row; row > 0; row--) {
-                        for (let col = 0; col < this.props.boardWidth; col++) {
+                        for (let col = 0; col < boardWidth; col++) {
                             field[row][col] = field[row - 1][col]
                         }
                     }
 
                     // Check if the row is the last
-                    row = this.props.boardHeight
+                    row = boardHeight
                 }
             }
 
             // Update state - update score, update number of tiles, change level
             this.setState(prev => ({
-                score: prev.score + 1 * prev.level,
+                score: prev.score + prev.level,
                 tileCount: prev.tileCount + 1,
                 level: 1 + Math.floor(prev.tileCount / 10)
-            }))
+            }));
 
             // Prepare new timer
-            let timerId
+            let timerId;
 
             // Reset the timer
-            clearInterval(this.state.timerId)
+            clearInterval(this.state.timerId);
 
             // Update new timer
             timerId = setInterval(
                 () => this._handleBoardUpdate('down'),
-                1000 - (this.state.level * 10 > 600 ? 600 : this.state.level * 10)
-            )
+                1000 - (level * 10 > 600 ? 600 : level * 10)
+            );
 
             // Use new timer
             this.setState({
-                timerId: timerId
-            })
+                timerId
+            });
 
             // Create new tile
-            tile = Math.floor(Math.random() * 7 + 1)
-            x = parseInt(this.props.boardWidth) / 2
-            y = 1
-            rotate = 0
+            tile = Math.floor(Math.random() * 7 + 1);
+            x = parseInt(boardWidth) / 2;
+            y = 1;
+            rotate = 0;
 
             // Test if game is over - test if new tile can't be placed in field
             if (
@@ -402,23 +394,6 @@ class Tetris extends Component<TetrisProps, TetrisState> {
             gameOver: false,
             field
         })
-    };
-
-    _handleDirectionKeyPress = (event: any) => {
-        switch (event.keyCode) {
-            case LEFT_KEY:
-                this._handleBoardUpdate('left');
-                break;
-            case UP_KEY:
-                this._handleBoardUpdate('rotate');
-                break;
-            case RIGHT_KEY:
-                this._handleBoardUpdate('right');
-                break;
-            case DOWN_KEY:
-                this._handleBoardUpdate('down');
-                break;
-        }
     };
 
     render() {
