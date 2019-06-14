@@ -1,11 +1,11 @@
 import React from 'react';
 
 type BlockControlButtonsProps = {
-    click:Function
+    click:Function,
 }
 const BlockControlButtons = (props:{click:Function}) => {
     let { click } = props;
-
+    
     return <div className='tetris__block-controls'>
             <button className="btn" onClick={() => click('left')}>Left</button>
 

@@ -5,6 +5,11 @@ import Tiles from "./tiles";
 import BlockControlButtons from "./Buttons/block-control-buttons";
 import GameControlButtons from "./Buttons/game-control-buttons";
 
+const LEFT_KEY = 37;
+const UP_KEY = 38;
+const RIGHT_KEY = 39;
+const DOWN_KEY = 40;
+
 // Define props for Tetris component
 type TetrisProps = {
     boardWidth: any,
@@ -88,6 +93,10 @@ class Tetris extends Component<TetrisProps, TetrisState> {
         return Math.floor(boardWidth / 2);
     };
 
+    componentWillMount(): void {
+        document.addEventListener("keydown", this._handleDirectionKeyPress, false);
+    }
+
     /**
      * @description 1. Sets timer after component mounts
      * 2. Uses level (this.state.level) to determine the interval (game speed)
@@ -105,7 +114,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
 
         this.setState({
             timerId
-        })
+        });
     }
 
     /**
@@ -113,7 +122,8 @@ class Tetris extends Component<TetrisProps, TetrisState> {
      * @memberof Tetris
      */
     componentWillUnmount() {
-        window.clearInterval(this.state.timerId)
+        document.removeEventListener("keydown", this._handleDirectionKeyPress, false);
+        window.clearInterval(this.state.timerId);
     }
 
     /**
@@ -125,7 +135,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
      * @memberof Tetris
      */
     _handleBoardUpdate = (command: string) => {
-        const { gameOver, isPaused } = this.state;
+        const {gameOver, isPaused} = this.state;
         if (gameOver || isPaused) {
             return
         }
@@ -357,13 +367,13 @@ class Tetris extends Component<TetrisProps, TetrisState> {
             tileRotate: rotate,
             activeTile: tile
         })
-    }
+    };
 
     /**
      * @description Stops and resumes the game
      * @memberof Tetris
      */
-    handlePauseClick = () => {
+    _handlePauseClick = () => {
         this.setState(prev => ({
             isPaused: !prev.isPaused
         }))
@@ -373,7 +383,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
      * @description Resets the game
      * @memberof Tetris
      */
-    handleNewGameClick = () => {
+    _handleNewGameClick = () => {
         const {boardWidth, boardHeight} = this.props;
 
         const field: number[][] = this._generateBoardAndReturnField(boardWidth, boardHeight);
@@ -394,6 +404,23 @@ class Tetris extends Component<TetrisProps, TetrisState> {
         })
     };
 
+    _handleDirectionKeyPress = (event: any) => {
+        switch (event.keyCode) {
+            case LEFT_KEY:
+                this._handleBoardUpdate('left');
+                break;
+            case UP_KEY:
+                this._handleBoardUpdate('rotate');
+                break;
+            case RIGHT_KEY:
+                this._handleBoardUpdate('right');
+                break;
+            case DOWN_KEY:
+                this._handleBoardUpdate('down');
+                break;
+        }
+    };
+
     render() {
         return (
             <div className="tetris">
@@ -407,7 +434,9 @@ class Tetris extends Component<TetrisProps, TetrisState> {
                 />
 
                 <BlockControlButtons click={this._handleBoardUpdate}/>
-                <GameControlButtons pauseClick={this.handlePauseClick} newGameClick={this.handleNewGameClick} isPaused={this.state.isPaused}/>
+                <GameControlButtons pauseClick={this._handlePauseClick}
+                                    newGameClick={this._handleNewGameClick}
+                                    isPaused={this.state.isPaused}/>
             </div>
         )
     }
