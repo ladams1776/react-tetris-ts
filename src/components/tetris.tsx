@@ -51,8 +51,6 @@ class Tetris extends Component<TetrisProps, TetrisState> {
             timerId: null,
             tiles: Tiles
         }
-
-        this.handleBoardUpdate = this.handleBoardUpdate.bind(this);
     }
 
     /**
@@ -93,7 +91,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
     /**
      * @description 1. Sets timer after component mounts
      * 2. Uses level (this.state.level) to determine the interval (game speed)
-     * and executes handleBoardUpdate() set to 'down' method during each interval
+     * and executes _handleBoardUpdate() set to 'down' method during each interval
      *
      * @memberof Tetris
      */
@@ -101,7 +99,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
         let timerId;
 
         timerId = window.setInterval(
-            () => this.handleBoardUpdate('down'),
+            () => this._handleBoardUpdate('down'),
             1000 - (this.state.level * 10 > 600 ? 600 : this.state.level * 10)
         );
 
@@ -126,7 +124,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
      * @param {string} command
      * @memberof Tetris
      */
-    handleBoardUpdate(command: string) {
+    _handleBoardUpdate = (command: string) => {
         const { gameOver, isPaused } = this.state;
         if (gameOver || isPaused) {
             return
@@ -316,7 +314,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
 
             // Update new timer
             timerId = setInterval(
-                () => this.handleBoardUpdate('down'),
+                () => this._handleBoardUpdate('down'),
                 1000 - (this.state.level * 10 > 600 ? 600 : this.state.level * 10)
             )
 
@@ -408,7 +406,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
                     rotate={this.state.tileRotate}
                 />
 
-                <BlockControlButtons click={this.handleBoardUpdate}/>
+                <BlockControlButtons click={this._handleBoardUpdate}/>
                 <GameControlButtons pauseClick={this.handlePauseClick} newGameClick={this.handleNewGameClick} isPaused={this.state.isPaused}/>
             </div>
         )
