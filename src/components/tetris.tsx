@@ -1,5 +1,5 @@
 // Import React
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import TetrisBoard from './tetris-board'
 import Tiles from "./tiles";
 import BlockControlButtons from "./Buttons/block-control-buttons";
@@ -31,7 +31,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
     constructor(props: any) {
         super(props);
 
-        const {boardWidth, boardHeight} = props;
+        const { boardWidth, boardHeight } = props;
 
         const field: number[][] = this._generateBoardAndReturnField(boardWidth, boardHeight);
 
@@ -135,6 +135,8 @@ class Tetris extends Component<TetrisProps, TetrisState> {
             return
         }
 
+        //
+
         let xAdd = 0;
         let yAdd = 0;
         let rotateAdd = 0;
@@ -168,6 +170,12 @@ class Tetris extends Component<TetrisProps, TetrisState> {
         let x = activeTileX;
         let y = activeTileY;
         let rotate = tileRotate;
+
+
+
+
+        // seems the Tetris shape will need:
+        // 1. xAdd, rotateAdd, yAdd 
 
         // Remove actual tile from field to test for new insert position
         field[y + tiles[tile][rotate][0][1]][x + tiles[tile][rotate][0][0]] = 0;
@@ -220,7 +228,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
                     if (
                         field[y + tiles[tile][newRotate][i][1]][
                         x + tiles[tile][newRotate][i][0]
-                            ] !== 0
+                        ] !== 0
                     ) {
                         // Prevent rotation
                         rotateIsValid = false
@@ -252,7 +260,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
                     if (
                         field[y + yAdd + tiles[tile][rotate][i][1]][
                         x + tiles[tile][rotate][i][0]
-                            ] !== 0
+                        ] !== 0
                     ) {
                         // Prevent faster fall
                         yAddIsValid = false
@@ -274,6 +282,14 @@ class Tetris extends Component<TetrisProps, TetrisState> {
         field[y + tiles[tile][rotate][1][1]][x + tiles[tile][rotate][1][0]] = tile;
         field[y + tiles[tile][rotate][2][1]][x + tiles[tile][rotate][2][0]] = tile;
         field[y + tiles[tile][rotate][3][1]][x + tiles[tile][rotate][3][0]] = tile;
+
+
+
+
+
+        // this all looks like game logic
+
+
 
         // If moving down is not possible, remove completed rows add score
         // and find next tile and check if game is over
@@ -376,7 +392,7 @@ class Tetris extends Component<TetrisProps, TetrisState> {
      * @memberof Tetris
      */
     _handleNewGameClick = () => {
-        const {boardWidth, boardHeight} = this.props;
+        const { boardWidth, boardHeight } = this.props;
 
         const field: number[][] = this._generateBoardAndReturnField(boardWidth, boardHeight);
 
@@ -408,10 +424,10 @@ class Tetris extends Component<TetrisProps, TetrisState> {
                     rotate={this.state.tileRotate}
                 />
 
-                <BlockControlButtons click={this._handleBoardUpdate}/>
+                <BlockControlButtons click={this._handleBoardUpdate} />
                 <GameControlButtons pauseClick={this._handlePauseClick}
-                                    newGameClick={this._handleNewGameClick}
-                                    isPaused={this.state.isPaused}/>
+                    newGameClick={this._handleNewGameClick}
+                    isPaused={this.state.isPaused} />
             </div>
         )
     }
